@@ -1,5 +1,8 @@
 import { useState } from 'react';
 import './App.css';
+import Quiz from './components/Quiz';
+import ScoreSection from './components/ScoreSection';
+import { quizData } from './data/quizData';
 
 function App() {
   const [currentQuestion, setCurrentQuestion] = useState(0);
@@ -16,22 +19,21 @@ function App() {
       correct: answer === quizData[currentQuestion].correct,
     };
 
-    if(newAnswer.correct){
+    if (newAnswer.correct) {
       setScore((prevScore) => prevScore + 1);
       setFeedback("○");
-    }else{
+    } else {
       setFeedback("×");
     }
-    setAnswers([...answers, newAnswer])
-    console.log(answers);
+    setAnswers([...answers, newAnswer]);
     setNext(true);
   };
 
   const goToNextQuestion = () => {
     const nextQuestion = currentQuestion + 1;
-    if(nextQuestion < quizData.length){
+    if (nextQuestion < quizData.length) {
       setCurrentQuestion(nextQuestion);
-    }else{
+    } else {
       setShowScore(true);
     }
     setNext(false);
@@ -40,88 +42,19 @@ function App() {
   return (
     <div className="quiz-container">
       {showScore ? (
-        <div className='score-section'>
-          <h1>スコア</h1>
-          <h2 className="final-score">
-            {score}/{quizData.length}
-          </h2>
-          <table className="answer-table">
-            <thead>
-              <tr>
-                <td>質問</td>
-                <td>あなたの解答</td>
-                <td>合否</td>
-              </tr>
-            </thead>
-
-            <tbody>
-              {answers.map((item) => (
-                <tr className={item.correct ? "correct" : "wrong"}>
-                  <td>{item.question}</td>
-                  <td>{item.answer}</td>
-                  <td>{item.correct ? "○" : "×"}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+        <ScoreSection score={score} answers={answers} />
       ) : (
-        <div className='question-section'>
-        <h1>問題 {currentQuestion + 1 } / {quizData.length} </h1>
-        <h2>{quizData[currentQuestion].question}</h2>
-
-        {next ? (
-          <div className='feedback-section'>
-            <h2 className='large-feedback'>{feedback}</h2>
-            <p>解答</p>
-            <p>{quizData[currentQuestion].correct}</p>
-            <button onClick={goToNextQuestion}>次の問題へ</button>
-          </div>
-        ) : (
-          <div className='answer-section'>
-          {quizData[currentQuestion].options.map((item, index) => (
-            <button 
-            key={index}
-             onClick={ () => handleAnswer(item)}
-             className={`quiz-option-button option-${index}`}>{item}</button>
-        ))}
-      </div>
-
-        )}
-        
-      </div>
-
+        <Quiz
+          currentQuestion={currentQuestion}
+          quizData={quizData}
+          next={next}
+          feedback={feedback}
+          handleAnswer={handleAnswer}
+          goToNextQuestion={goToNextQuestion}
+        />
       )}
-      
-      
     </div>
   );
 }
-
-const quizData = [
-  {
-    question: "悟りの第二段階の状態は？",
-    options: ["予流果","一来果","不還果","阿羅漢果"],
-    correct: "一来果",
-    supplement: " : 欲界の煩悩を断じ終えた位のこと",
-  },
-  {
-    question: "四聖諦（ししょうたい）はどれか？",
-    options: ["苦諦","楽諦","幸諦","怒諦"],
-    correct: "苦諦",
-    supplement: " : 欲界の煩悩を断じ終えた位のこと",
-  },
-  {
-    question: "a？",
-    options: ["予流果","一来果","不還果","阿羅漢果"],
-    correct: "一来果",
-    supplement: " : 欲界の煩悩を断じ終えた位のこと",
-  },{
-    question: "b？",
-    options: ["予流果","一来果","不還果","阿羅漢果"],
-    correct: "一来果",
-    supplement: " : 欲界の煩悩を断じ終えた位のこと",
-  },
-]
 
 export default App;
